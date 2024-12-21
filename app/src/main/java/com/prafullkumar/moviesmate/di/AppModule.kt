@@ -1,10 +1,14 @@
 package com.prafullkumar.moviesmate.di
 
-import com.prafullkumar.moviesmate.HomeViewModel
 import com.prafullkumar.moviesmate.data.AuthenticationRepoImpl
 import com.prafullkumar.moviesmate.domain.ApiService
 import com.prafullkumar.moviesmate.domain.AuthenticationRepo
 import com.prafullkumar.moviesmate.ui.auth.AuthViewModel
+import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.CategoryViewModel
+import com.prafullkumar.moviesmate.ui.mainScreen.home.HomeViewModel
+import com.prafullkumar.moviesmate.ui.mainScreen.movie.MovieDetailViewModel
+import com.prafullkumar.moviesmate.ui.mainScreen.profile.ProfileVM
+import com.prafullkumar.moviesmate.ui.mainScreen.search.SearchViewModel
 import com.prafullkumar.moviesmate.utils.BASE_URL
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -23,4 +27,9 @@ val appModule = module {
     single<AuthenticationRepo> { AuthenticationRepoImpl() }
     viewModel { HomeViewModel() }
     viewModel { AuthViewModel() }
+
+    viewModel { SearchViewModel() }
+    viewModel { MovieDetailViewModel(get()) }
+    viewModel { ProfileVM() }
+    viewModel { CategoryViewModel(get()) }
 }

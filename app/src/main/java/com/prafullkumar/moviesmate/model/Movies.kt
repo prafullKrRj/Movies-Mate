@@ -8,5 +8,5 @@ data class Movies(
     @SerializedName("Search")
     val search: List<Search>,
     @SerializedName("totalResults")
-    val totalResults: String
+    val totalResults: String?
 )

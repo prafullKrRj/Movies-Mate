@@ -22,7 +22,8 @@ class AuthenticationRepoImpl : AuthenticationRepo, KoinComponent {
         return flow {
             try {
                 val user = User("$username@moviesmate.com", password)
-                val result = auth.signInWithEmailAndPassword("$username@moviesmate.com", password).await()
+                val result =
+                    auth.signInWithEmailAndPassword("$username@moviesmate.com", password).await()
                 if (result.user == null) {
                     emit(Resource.Error("An error occurred"))
                     return@flow

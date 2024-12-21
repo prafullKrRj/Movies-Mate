@@ -37,15 +37,16 @@ class AuthViewModel : ViewModel(), KoinComponent {
             _loginState.update { Resource.Loading }
             Log.d("Authentication", "registerUser: $email $password $fullName")
             val response =
-                authenticationRepo.register(email.trim(), password.trim(), fullName).collect { response ->
-                    _loginState.update {
-                        when (response) {
-                            is Resource.Success -> Resource.Success(true)
-                            is Resource.Error -> Resource.Error(response.message)
-                            else -> Resource.Empty()
+                authenticationRepo.register(email.trim(), password.trim(), fullName)
+                    .collect { response ->
+                        _loginState.update {
+                            when (response) {
+                                is Resource.Success -> Resource.Success(true)
+                                is Resource.Error -> Resource.Error(response.message)
+                                else -> Resource.Empty()
+                            }
                         }
                     }
-                }
         }
     }
 

@@ -4,15 +4,26 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.google.firebase.auth.FirebaseAuth
 import com.prafullkumar.moviesmate.ui.auth.AuthScreen
-import com.prafullkumar.moviesmate.ui.mainScreen.HomeScreen
+import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.CategoryScreen
+import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.Type
+import com.prafullkumar.moviesmate.ui.mainScreen.home.HomeScreen
+import com.prafullkumar.moviesmate.ui.mainScreen.movie.MovieScreen
+import com.prafullkumar.moviesmate.ui.mainScreen.profile.ProfileScreen
+import com.prafullkumar.moviesmate.ui.mainScreen.search.SearchScreen
 import com.prafullkumar.moviesmate.ui.theme.MoviesMateTheme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 
 sealed class AppRoutes {
@@ -40,15 +51,58 @@ class MainActivity : ComponentActivity() {
                     composable<AppRoutes.AuthScreen> {
                         AuthScreen(viewModel = getViewModel(), navController = navController)
                     }
-                    composable<AppRoutes.Application> {
-                        HomeScreen(onSearchClick = {
-
-                        }, onProfileClick = {
-
-                        })
-                    }
+                    mainAppNavigation(navController)
                 }
             }
         }
     }
+}
+
+fun NavGraphBuilder.mainAppNavigation(navController: NavHostController) {
+    navigation<AppRoutes.Application>(startDestination = MainAppRoutes.HomeScreen) {
+        composable<MainAppRoutes.HomeScreen> {
+            HomeScreen(viewModel = getViewModel(), onSearchClick = {
+                navController.navigate(MainAppRoutes.SearchScreen)
+            }, onProfileClick = {
+                navController.navigate(MainAppRoutes.ProfileScreen)
+            }, navHostController = navController)
+        }
+        composable<MainAppRoutes.SearchScreen> {
+            SearchScreen(
+                viewModel = getViewModel(),
+                navController = navController
+            )
+        }
+        composable<MainAppRoutes.MovieDetailScreen> {
+            val movie = it.toRoute<MainAppRoutes.MovieDetailScreen>()
+            MovieScreen(viewModel = koinViewModel { parametersOf(movie) }, navController)
+        }
+        composable<MainAppRoutes.ProfileScreen> {
+            ProfileScreen(viewModel = getViewModel())
+        }
+        composable<MainAppRoutes.CategoryScreen> {
+            val category = it.toRoute<MainAppRoutes.CategoryScreen>()
+            CategoryScreen(
+                categoryViewModel = koinViewModel { parametersOf(category) },
+                navController
+            )
+        }
+    }
+}
+
+sealed interface MainAppRoutes {
+    @Serializable
+    data object HomeScreen : MainAppRoutes
+
+    @Serializable
+    data object SearchScreen : MainAppRoutes
+
+    @Serializable
+    data object ProfileScreen : MainAppRoutes
+
+    @Serializable
+    data class MovieDetailScreen(val id: String, val name: String) : MainAppRoutes
+
+    @Serializable
+    data class CategoryScreen(val category: String, val type: Type) : MainAppRoutes
 }
