@@ -30,10 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.prafullkumar.moviesmate.MainAppRoutes
 import com.prafullkumar.moviesmate.model.Movies
+import com.prafullkumar.moviesmate.model.detail.MovieDetail
 import com.prafullkumar.moviesmate.ui.mainScreen.MovieCard
 import com.prafullkumar.moviesmate.ui.mainScreen.SectionHeader
 import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.Type
 import com.prafullkumar.moviesmate.utils.Resource
+import java.util.Calendar
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,72 +51,70 @@ fun HomeScreen(
     val recentlyViewed by viewModel.recentlyViewed.collectAsState()
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text("MovieMate")
-                },
-                actions = {
-                    IconButton(onClick = onSearchClick) {
-                        Icon(Icons.Default.Search, "Search")
-                    }
-                    IconButton(onClick = onProfileClick) {
-                        Icon(Icons.Default.Person, "Profile")
-                    }
+            TopAppBar(title = {
+                Text("MovieMate")
+            }, actions = {
+                IconButton(onClick = onSearchClick) {
+                    Icon(Icons.Default.Search, "Search")
                 }
-            )
+                IconButton(onClick = onProfileClick) {
+                    Icon(Icons.Default.Person, "Profile")
+                }
+            })
         },
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Section(
-                title = "Latest Releases",
+            Section(title = "Latest Releases",
                 resource = latestMovies,
-                navController = navHostController
-            )
-            Section(
-                title = "Latest Series",
+                navController = navHostController,
+                onSeeAllClick = {
+                    navHostController.navigate(
+                        MainAppRoutes.CategoryScreen(
+                            "movie", Type.MOVIE, Calendar.getInstance().get(Calendar.YEAR)
+                        )
+                    )
+                })
+            Section(title = "Latest Series",
                 resource = latestSeries,
-                navController = navHostController
-            )
+                navController = navHostController,
+                onSeeAllClick = {
+                    navHostController.navigate(
+                        MainAppRoutes.CategoryScreen(
+                            "series", Type.SERIES, Calendar.getInstance().get(Calendar.YEAR)
+                        )
+                    )
+                })
 
             // Categories/Genres
-            SectionHeader(
-                title = "Categories",
-                onSeeAllClick = { }
-            )
+            SectionHeader(title = "Categories", true, onSeeAllClick = {
+                navHostController.navigate(MainAppRoutes.CategorySelectionScreen)
+            })
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val genres = listOf("Action", "Comedy", "Drama", "Horror", "Romance")
                 items(genres.size) { index ->
-                    AssistChip(
-                        onClick = {
-                            navHostController.navigate(
-                                MainAppRoutes.CategoryScreen(
-                                    genres[index],
-                                    type = Type.GENRE
-                                )
+                    AssistChip(onClick = {
+                        navHostController.navigate(
+                            MainAppRoutes.CategoryScreen(
+                                genres[index], type = Type.GENRE
                             )
-                        },
-                        label = { Text(genres[index]) }
-                    )
+                        )
+                    }, label = { Text(genres[index]) })
                 }
             }
 
-            // Recently Viewed
-            SectionHeader(
-                title = "Recently Viewed",
-                onSeeAllClick = { }
-            )
+            SectionHeader(title = "Recently Viewed", false, onSeeAllClick = { })
             when (recentlyViewed) {
                 is Resource.Empty -> {
                     Text(
-                        text = "No data found",
-                        modifier = Modifier.padding(16.dp)
+                        text = "No data found", modifier = Modifier.padding(16.dp)
                     )
                 }
 
@@ -130,29 +130,23 @@ fun HomeScreen(
                 }
 
                 is Resource.Success -> {
-                    (recentlyViewed as Resource.Success<List<String>>).data.forEach {
-                        Text(
-                            text = it,
-                            modifier = Modifier.padding(16.dp)
-                        )
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        reverseLayout = true
+                    ) {
+                        items((recentlyViewed as Resource.Success<List<MovieDetail>>).data) {
+                            MovieCard(
+                                imageUrl = it.Poster ?: "",
+                                title = it.Title ?: "N/A",
+                                rating = 4.5f,
+                                navController = navHostController,
+                                imdbId = it.imdbID!!
+                            )
+                        }
                     }
                 }
             }
-
-//            LazyRow(
-//                contentPadding = PaddingValues(horizontal = 16.dp),
-//                horizontalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                items(5) {
-//                    MovieCard(
-//                        imageUrl = "https://placeholder.com/150x220",
-//                        title = "Movie $it",
-//                        imdbId = "tt123456$it",
-//                        rating = 4.0f,
-//                        navController = navHostController
-//                    )
-//                }
-//            }
 
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -160,23 +154,25 @@ fun HomeScreen(
 }
 
 @Composable
-fun Section(title: String, resource: Resource<Movies>, navController: NavHostController) {
+fun Section(
+    title: String,
+    resource: Resource<Movies>,
+    onSeeAllClick: () -> Unit = {},
+    navController: NavHostController
+) {
     SectionHeader(
-        title = title,
-        onSeeAllClick = { }
+        title = title, true, onSeeAllClick = onSeeAllClick
     )
     when (resource) {
         is Resource.Empty -> {
             Text(
-                text = "No data found",
-                modifier = Modifier.padding(16.dp)
+                text = "No data found", modifier = Modifier.padding(16.dp)
             )
         }
 
         is Resource.Error -> {
             Text(
-                text = resource.message,
-                modifier = Modifier.padding(16.dp)
+                text = resource.message, modifier = Modifier.padding(16.dp)
             )
         }
 

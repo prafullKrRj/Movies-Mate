@@ -13,7 +13,8 @@ interface ApiService {
     suspend fun getMovieList(
         @Query("apikey") apiKey: String,
         @Query("s") search: String,
-        @Query("type") type: String
+        @Query("type") type: String,
+        @Query("page") page: Int? = null
     ): Response<Movies>
 
 
@@ -22,12 +23,13 @@ interface ApiService {
         @Query("apikey") apiKey: String,
         @Query("s") search: String,
         @Query("type") type: String,
-        @Query("y") year: Int? = null
+        @Query("y") year: Int? = null,
+        @Query("page") page: Int? = null
     ): Response<Movies>
 
     @GET("?")
     suspend fun getMovieDetails(
         @Query("apikey") apiKey: String,
-        @Query("i") imdbId: String
+        @Query("i") imdbId: String,
     ): Response<MovieDetail>
 }

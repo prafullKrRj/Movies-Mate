@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -41,28 +42,27 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.prafullkumar.moviesmate.model.Movies
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.prafullkumar.moviesmate.model.Search
 import com.prafullkumar.moviesmate.ui.mainScreen.MovieCard
-import com.prafullkumar.moviesmate.utils.Resource
 
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel,
     navController: NavHostController
 ) {
-    val searchResults by viewModel.searchResults.collectAsState()
+    val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var selectedFilter by rememberSaveable { mutableStateOf("all") }
     var isSearchFocused by rememberSaveable { mutableStateOf(false) }
@@ -107,34 +107,47 @@ fun SearchScreen(
 
             // Search Results
             if (searchQuery.isNotEmpty()) {
-                when (searchResults) {
-                    is Resource.Empty -> {
-                        Text(
-                            text = "No data found",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-
-                    is Resource.Error -> {
-                        Text(
-                            text = (searchResults as Resource.Error).message,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-
-                    Resource.Loading -> {
+                when (searchResults.loadState.refresh) {
+                    is androidx.paging.LoadState.Loading -> {
                         CircularProgressIndicator()
                     }
 
-                    is Resource.Success -> {
-                        SearchResults(
-                            results = (searchResults as Resource.Success<Movies>).data.search,
-                            navController = navController
-                        )
+                    is androidx.paging.LoadState.Error -> {
+                        Text(text = "Error")
+                    }
+
+                    is androidx.paging.LoadState.NotLoading -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(150.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            items(searchResults.itemCount) { index ->
+                                searchResults[index]?.let { show ->
+                                    MovieCard(
+                                        imageUrl = show.poster ?: "",
+                                        title = show.title,
+                                        rating = 4.5f,
+                                        imdbId = show.imdbID,
+                                        navController = navController
+                                    )
+                                }
+                            }
+                            if (searchResults.loadState.append is androidx.paging.LoadState.Loading) {
+                                item {
+                                    Box(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp),
+                                        contentAlignment = Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-
-
             } else {
                 SearchSuggestions(
                     onSuggestionClick = { suggestion ->

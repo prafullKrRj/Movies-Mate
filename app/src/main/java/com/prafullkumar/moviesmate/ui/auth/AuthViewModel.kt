@@ -14,7 +14,7 @@ import org.koin.core.component.inject
 
 class AuthViewModel : ViewModel(), KoinComponent {
     private val authenticationRepo by inject<AuthenticationRepo>()
-    private val _loginState = MutableStateFlow<Resource<Boolean>>(Resource.Empty())
+    private val _loginState = MutableStateFlow<Resource<Boolean>>(Resource.Empty)
     val loginState = _loginState.asStateFlow()
     fun loginUser(email: String, password: String) {
         viewModelScope.launch {
@@ -25,7 +25,7 @@ class AuthViewModel : ViewModel(), KoinComponent {
                     when (response) {
                         is Resource.Success -> Resource.Success(true)
                         is Resource.Error -> Resource.Error(response.message)
-                        else -> Resource.Empty()
+                        else -> Resource.Empty
                     }
                 }
             }
@@ -43,7 +43,7 @@ class AuthViewModel : ViewModel(), KoinComponent {
                             when (response) {
                                 is Resource.Success -> Resource.Success(true)
                                 is Resource.Error -> Resource.Error(response.message)
-                                else -> Resource.Empty()
+                                else -> Resource.Empty
                             }
                         }
                     }

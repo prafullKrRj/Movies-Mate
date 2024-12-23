@@ -75,6 +75,7 @@ fun MovieCard(
 @Composable
 fun SectionHeader(
     title: String,
+    showSeeAll: Boolean,
     onSeeAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -89,8 +90,10 @@ fun SectionHeader(
             text = title,
             style = MaterialTheme.typography.titleMedium
         )
-        TextButton(onClick = onSeeAllClick) {
-            Text("See all")
+        if (showSeeAll) {
+            TextButton(onClick = onSeeAllClick) {
+                Text("See all")
+            }
         }
     }
 }

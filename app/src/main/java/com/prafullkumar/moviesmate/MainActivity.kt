@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,8 +14,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.google.firebase.auth.FirebaseAuth
 import com.prafullkumar.moviesmate.ui.auth.AuthScreen
-import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.CategoryScreen
+import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.MovieListScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.Type
+import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.categorrySelection.CategorySelectionScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.home.HomeScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.movie.MovieScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.profile.ProfileScreen
@@ -82,10 +84,13 @@ fun NavGraphBuilder.mainAppNavigation(navController: NavHostController) {
         }
         composable<MainAppRoutes.CategoryScreen> {
             val category = it.toRoute<MainAppRoutes.CategoryScreen>()
-            CategoryScreen(
-                categoryViewModel = koinViewModel { parametersOf(category) },
+            MovieListScreen(
+                viewModel = koinViewModel { parametersOf(category) },
                 navController
             )
+        }
+        composable<MainAppRoutes.CategorySelectionScreen> {
+            CategorySelectionScreen(Modifier, navController)
         }
     }
 }
@@ -104,5 +109,9 @@ sealed interface MainAppRoutes {
     data class MovieDetailScreen(val id: String, val name: String) : MainAppRoutes
 
     @Serializable
-    data class CategoryScreen(val category: String, val type: Type) : MainAppRoutes
+    data class CategoryScreen(val category: String, val type: Type, val year: Int = 0) :
+        MainAppRoutes
+
+    @Serializable
+    data object CategorySelectionScreen : MainAppRoutes
 }
