@@ -29,8 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.prafullkumar.moviesmate.MainAppRoutes
-import com.prafullkumar.moviesmate.model.Movies
 import com.prafullkumar.moviesmate.model.detail.MovieDetail
+import com.prafullkumar.moviesmate.model.movies.Movies
 import com.prafullkumar.moviesmate.ui.mainScreen.MovieCard
 import com.prafullkumar.moviesmate.ui.mainScreen.SectionHeader
 import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.Type

@@ -1,4 +1,4 @@
-package com.prafullkumar.moviesmate.model
+package com.prafullkumar.moviesmate.model.movies
 
 import com.google.gson.annotations.SerializedName
 

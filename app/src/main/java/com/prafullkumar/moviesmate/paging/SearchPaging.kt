@@ -3,8 +3,9 @@ package com.prafullkumar.moviesmate.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.prafullkumar.moviesmate.domain.ApiService
-import com.prafullkumar.moviesmate.model.Search
+import com.prafullkumar.moviesmate.model.movies.Search
 import com.prafullkumar.moviesmate.utils.API_KEY
+import kotlinx.coroutines.delay
 
 class SearchPagingSource(
     private val apiService: ApiService,
@@ -27,6 +28,8 @@ class SearchPagingSource(
                 type = if (selectedFilter.lowercase() == "all") "" else selectedFilter,
                 page = position
             )
+
+            delay(1500)
             if (response.isSuccessful) {
                 val movies = response.body()!!.search
                 LoadResult.Page(

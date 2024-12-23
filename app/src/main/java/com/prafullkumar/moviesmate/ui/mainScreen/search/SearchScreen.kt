@@ -54,7 +54,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.prafullkumar.moviesmate.model.Search
+import com.prafullkumar.moviesmate.model.movies.Search
 import com.prafullkumar.moviesmate.ui.mainScreen.MovieCard
 
 @Composable

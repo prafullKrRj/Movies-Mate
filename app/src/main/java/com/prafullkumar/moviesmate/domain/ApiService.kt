@@ -1,7 +1,7 @@
 package com.prafullkumar.moviesmate.domain
 
-import com.prafullkumar.moviesmate.model.Movies
 import com.prafullkumar.moviesmate.model.detail.MovieDetail
+import com.prafullkumar.moviesmate.model.movies.Movies
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

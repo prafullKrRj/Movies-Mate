@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.prafullkumar.moviesmate.domain.ApiService
-import com.prafullkumar.moviesmate.model.Movies
 import com.prafullkumar.moviesmate.model.detail.MovieDetail
+import com.prafullkumar.moviesmate.model.movies.Movies
 import com.prafullkumar.moviesmate.utils.API_KEY
 import com.prafullkumar.moviesmate.utils.Resource
 import kotlinx.coroutines.Dispatchers

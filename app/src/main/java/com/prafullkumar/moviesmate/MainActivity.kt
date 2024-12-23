@@ -19,6 +19,7 @@ import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.Type
 import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.categorrySelection.CategorySelectionScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.home.HomeScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.movie.MovieScreen
+import com.prafullkumar.moviesmate.ui.mainScreen.movie.reviewScreen.ReviewScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.profile.ProfileScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.search.SearchScreen
 import com.prafullkumar.moviesmate.ui.theme.MoviesMateTheme
@@ -92,6 +93,10 @@ fun NavGraphBuilder.mainAppNavigation(navController: NavHostController) {
         composable<MainAppRoutes.CategorySelectionScreen> {
             CategorySelectionScreen(Modifier, navController)
         }
+        composable<MainAppRoutes.ReviewScreen> {
+            val review = it.toRoute<MainAppRoutes.ReviewScreen>()
+            ReviewScreen(viewModel = koinViewModel { parametersOf(review) }, navController)
+        }
     }
 }
 
@@ -114,4 +119,7 @@ sealed interface MainAppRoutes {
 
     @Serializable
     data object CategorySelectionScreen : MainAppRoutes
+
+    @Serializable
+    data class ReviewScreen(val id: String, val title: String) : MainAppRoutes
 }

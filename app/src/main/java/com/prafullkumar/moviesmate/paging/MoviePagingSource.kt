@@ -3,7 +3,7 @@ package com.prafullkumar.moviesmate.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.prafullkumar.moviesmate.domain.ApiService
-import com.prafullkumar.moviesmate.model.Search
+import com.prafullkumar.moviesmate.model.movies.Search
 import com.prafullkumar.moviesmate.utils.API_KEY
 import kotlinx.coroutines.delay
 

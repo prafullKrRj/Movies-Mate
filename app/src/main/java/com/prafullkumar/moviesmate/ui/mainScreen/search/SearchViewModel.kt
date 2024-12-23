@@ -7,7 +7,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.prafullkumar.moviesmate.domain.ApiService
-import com.prafullkumar.moviesmate.model.Search
+import com.prafullkumar.moviesmate.model.movies.Search
 import com.prafullkumar.moviesmate.paging.SearchPagingSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest

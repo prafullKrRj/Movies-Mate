@@ -16,6 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -45,7 +48,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.prafullkumar.moviesmate.MainAppRoutes
 import com.prafullkumar.moviesmate.R
+import com.prafullkumar.moviesmate.model.MovieWithReviews
 import com.prafullkumar.moviesmate.model.detail.MovieDetail
 import com.prafullkumar.moviesmate.utils.Resource
 
@@ -87,7 +92,7 @@ fun MovieScreen(
 
 @Composable
 fun MovieDetailSuccess(
-    movieDetail: MovieDetail,
+    movieDetail: MovieWithReviews,
     navController: NavController,
     viewModel: MovieDetailViewModel
 ) {
@@ -95,7 +100,7 @@ fun MovieDetailSuccess(
     val scrollState = rememberScrollState()
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
-            model = movieDetail.Poster,
+            model = movieDetail.movie.Poster,
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
@@ -120,7 +125,7 @@ fun MovieDetailSuccess(
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
-                movieDetail.Title?.let {
+                movieDetail.movie.Title?.let {
                     DetailTopAppBar(
                         title = it,
                         onBackPressed = {
@@ -136,19 +141,33 @@ fun MovieDetailSuccess(
                     .verticalScroll(scrollState)
             ) {
                 // Header Section
-                MovieHeader(movieDetail)
+                MovieHeader(movieDetail.movie)
 
                 // Content Sections
-                MovieInfo(movieDetail)
+                MovieInfo(movieDetail.movie)
 
-                PlotSection(movieDetail)
+                PlotSection(movieDetail.movie)
 
-                CastSection(movieDetail)
+                CastSection(movieDetail.movie)
 
-                TechnicalDetails(movieDetail)
+                TechnicalDetails(movieDetail.movie)
 
-                RatingsSection(movieDetail)
+                RatingsSection(movieDetail.movie)
 
+                MovieMateRatingSection(
+                    avgRating = movieDetail.avgRating,
+                    totalRatings = movieDetail.totalRates,
+                    onSeeReviewsClick = {
+                        movieDetail.movie.imdbID?.let {
+                            navController.navigate(
+                                MainAppRoutes.ReviewScreen(
+                                    it,
+                                    movieDetail.movie.Title ?: ""
+                                )
+                            )
+                        }
+                    }
+                )
                 // IMDB Button
                 ImdbButton(
                     imdbId = viewModel.movie.id,
@@ -156,6 +175,78 @@ fun MovieDetailSuccess(
                         uriHandler.openUri(imdbUrl)
                     }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun MovieMateRatingSection(
+    avgRating: Double,
+    totalRatings: Long,
+    onSeeReviewsClick: () -> Unit,
+) {
+    DetailSection(
+        title = "MovieMate Ratings"
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Large Rating Display
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = if (totalRatings == 0L) "N/A" else String.format("%.1f", avgRating),
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = Color.White
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (totalRatings > 0) {
+                            repeat(10) { index ->
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = when {
+                                        index < avgRating -> Color(0xFFf3ce13)
+                                        index < avgRating + 0.5 -> Color(0xFFf3ce13).copy(alpha = 0.5f)
+                                        else -> Color.Gray
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        text = "$totalRatings ratings",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // See All Reviews Button
+            OutlinedButton(
+                onClick = onSeeReviewsClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.White
+                )
+            ) {
+                Text("See All Reviews")
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(Icons.Default.ArrowForward, contentDescription = null)
             }
         }
     }
