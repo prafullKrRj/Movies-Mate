@@ -162,7 +162,8 @@ fun MovieDetailSuccess(
                             navController.navigate(
                                 MainAppRoutes.ReviewScreen(
                                     it,
-                                    movieDetail.movie.Title ?: ""
+                                    movieDetail.movie.Title ?: "",
+                                    movieDetail.movie.Poster ?: ""
                                 )
                             )
                         }

@@ -80,7 +80,6 @@ class HomeViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             _recentlyViewed.value = Resource.Loading
             try {
-
                 val movieDetails = mutableListOf<MovieDetail>()
                 auth.currentUser!!.email?.let { it ->
                     firestore.collection("users")

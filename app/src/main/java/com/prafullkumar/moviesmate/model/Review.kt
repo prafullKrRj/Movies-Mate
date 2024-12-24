@@ -8,3 +8,16 @@ data class Review(
     val timestamp: Timestamp,
     val username: String
 )
+
+data class UserReview(
+    val review: String,
+    val poster: String,
+    val showName: String,
+    val rating: Double,
+    val timestamp: Timestamp,
+    val imdbId: String
+) {
+    fun toReview(username: String = ""): Review {
+        return Review(review, rating, timestamp, username)
+    }
+}

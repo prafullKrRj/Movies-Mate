@@ -5,9 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.prafullkumar.moviesmate.MainAppRoutes
 import com.prafullkumar.moviesmate.domain.ReviewRepo
 import com.prafullkumar.moviesmate.model.Review
+import com.prafullkumar.moviesmate.model.UserReview
 import com.prafullkumar.moviesmate.utils.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,9 +39,18 @@ class ReviewViewModel(
         }
     }
 
-    fun addReview(review: String, rating: Float) {
+    fun addReview(review: String, rating: Double) {
         viewModelScope.launch {
-            reviewRepo.addReview(review, rating, movie.id, movie.title)
+            reviewRepo.addReview(
+                UserReview(
+                    showName = movie.title,
+                    poster = movie.poster,
+                    review = review,
+                    rating = rating.toDouble(),
+                    timestamp = Timestamp.now(),
+                    imdbId = movie.id
+                )
+            )
         }
     }
 

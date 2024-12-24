@@ -21,6 +21,7 @@ import com.prafullkumar.moviesmate.ui.mainScreen.home.HomeScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.movie.MovieScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.movie.reviewScreen.ReviewScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.profile.ProfileScreen
+import com.prafullkumar.moviesmate.ui.mainScreen.profile.userReviewScreen.UserReviewScreen
 import com.prafullkumar.moviesmate.ui.mainScreen.search.SearchScreen
 import com.prafullkumar.moviesmate.ui.theme.MoviesMateTheme
 import kotlinx.serialization.Serializable
@@ -72,8 +73,7 @@ fun NavGraphBuilder.mainAppNavigation(navController: NavHostController) {
         }
         composable<MainAppRoutes.SearchScreen> {
             SearchScreen(
-                viewModel = getViewModel(),
-                navController = navController
+                viewModel = getViewModel(), navController = navController
             )
         }
         composable<MainAppRoutes.MovieDetailScreen> {
@@ -81,13 +81,12 @@ fun NavGraphBuilder.mainAppNavigation(navController: NavHostController) {
             MovieScreen(viewModel = koinViewModel { parametersOf(movie) }, navController)
         }
         composable<MainAppRoutes.ProfileScreen> {
-            ProfileScreen(viewModel = getViewModel())
+            ProfileScreen(viewModel = getViewModel(), navController)
         }
         composable<MainAppRoutes.CategoryScreen> {
             val category = it.toRoute<MainAppRoutes.CategoryScreen>()
             MovieListScreen(
-                viewModel = koinViewModel { parametersOf(category) },
-                navController
+                viewModel = koinViewModel { parametersOf(category) }, navController
             )
         }
         composable<MainAppRoutes.CategorySelectionScreen> {
@@ -96,6 +95,9 @@ fun NavGraphBuilder.mainAppNavigation(navController: NavHostController) {
         composable<MainAppRoutes.ReviewScreen> {
             val review = it.toRoute<MainAppRoutes.ReviewScreen>()
             ReviewScreen(viewModel = koinViewModel { parametersOf(review) }, navController)
+        }
+        composable<MainAppRoutes.UserReviews> {
+            UserReviewScreen(viewModel = koinViewModel(), navController)
         }
     }
 }
@@ -121,5 +123,8 @@ sealed interface MainAppRoutes {
     data object CategorySelectionScreen : MainAppRoutes
 
     @Serializable
-    data class ReviewScreen(val id: String, val title: String) : MainAppRoutes
+    data class ReviewScreen(val id: String, val title: String, val poster: String) : MainAppRoutes
+
+    @Serializable
+    data object UserReviews : MainAppRoutes
 }

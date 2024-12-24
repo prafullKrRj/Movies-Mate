@@ -38,7 +38,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -274,9 +274,9 @@ private fun EmptyReviewState(
 @Composable
 private fun WriteReviewSheet(
     onDismiss: () -> Unit,
-    onSubmit: (rating: Float, review: String) -> Unit
+    onSubmit: (rating: Double, review: String) -> Unit
 ) {
-    var rating by remember { mutableFloatStateOf(0f) }
+    var rating by remember { mutableDoubleStateOf(0.0) }
     var reviewText by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
@@ -313,7 +313,7 @@ private fun WriteReviewSheet(
             ) {
                 repeat(10) { index ->
                     IconButton(
-                        onClick = { rating = (index + 1).toFloat() },
+                        onClick = { rating = (index + 1).toDouble() },
                         modifier = Modifier.size(32.dp)
                     ) {
                         Icon(
@@ -328,7 +328,7 @@ private fun WriteReviewSheet(
 
             Text(
                 text = when {
-                    rating == 0f -> "Tap to rate"
+                    rating == 0.0 -> "Tap to rate"
                     rating <= 2 -> "Poor"
                     rating <= 4 -> "Fair"
                     rating <= 6 -> "Good"

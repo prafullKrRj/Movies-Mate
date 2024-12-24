@@ -16,7 +16,10 @@ import com.prafullkumar.moviesmate.ui.mainScreen.categoryScreen.MovieListViewMod
 import com.prafullkumar.moviesmate.ui.mainScreen.home.HomeViewModel
 import com.prafullkumar.moviesmate.ui.mainScreen.movie.MovieDetailViewModel
 import com.prafullkumar.moviesmate.ui.mainScreen.movie.reviewScreen.ReviewViewModel
+import com.prafullkumar.moviesmate.ui.mainScreen.profile.ProfileRepository
 import com.prafullkumar.moviesmate.ui.mainScreen.profile.ProfileVM
+import com.prafullkumar.moviesmate.ui.mainScreen.profile.userReviewScreen.UserReviewRepository
+import com.prafullkumar.moviesmate.ui.mainScreen.profile.userReviewScreen.UserReviewViewModel
 import com.prafullkumar.moviesmate.ui.mainScreen.search.SearchViewModel
 import com.prafullkumar.moviesmate.utils.BASE_URL
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -38,6 +41,7 @@ val appModule = module {
     single<MovieDetailRepo> { MovieDetailRepoImpl() }
     single<FirebaseFirestore> { FirebaseFirestore.getInstance() }
     single<ReviewRepo> { ReviewRepoImpl() }
+    single { ProfileRepository() }
     single<FirebaseAuth> { FirebaseAuth.getInstance() }
     viewModel { HomeViewModel() }
     viewModel { AuthViewModel() }
@@ -46,4 +50,8 @@ val appModule = module {
     viewModel { MovieDetailViewModel(get()) }
     viewModel { ProfileVM() }
     viewModel { MovieListViewModel(get()) }
+
+
+    single { UserReviewRepository() }
+    viewModel { UserReviewViewModel() }
 }
